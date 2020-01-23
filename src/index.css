@@ -1,13 +1,167 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://use.fontawesome.com/releases/v5.0.9/css/all.css");
+
+:root {
+  --diff-background-color: initial;
+  --diff-text-color: initial;
+  --diff-font-family: menlo, Courier, monospace;
+  --diff-selection-background-color: #b3d7ff;
+  --diff-gutter-insert-background-color: #d6fedb;
+  --diff-gutter-delete-background-color: #fadde0;
+  --diff-gutter-selected-background-color: #fffce0;
+  --diff-code-insert-background-color: #eaffee;
+  --diff-code-delete-background-color: #fdeff0;
+  --diff-code-insert-edit-background-color: #c0dc91;
+  --diff-code-delete-edit-background-color: #f39ea2;
+  --diff-code-selected-background-color: #fffce0;
+  --diff-omit-gutter-line-color: #cb2a1d;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.diff-decoration-content {
+  background-color: #f1f8ff;
+  color: black;
+}
+
+/* .diff-gutter-omit{
+  display: none;
+} */
+
+.file_name {
+  display: flex;
+  align-items: center;
+  background-color: #fafbfc;
+  color: #000;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  font-family: menlo;
+}
+
+.diff-gutter {
+  padding: 0 10px;
+}
+.diff-gutter-normal {
+  text-align: right !important;
+}
+.diff-gutter-insert {
+  text-align: right !important;
+}
+
+.diff-gutter-delete {
+  text-align: right !important;
+}
+
+.diff-hunk {
+  position: relative;
+}
+.flex {
+  display: flex;
+  justify-content: end;
+}
+.gutter__line-no {
+  text-align: right;
+}
+.gutter__line-icon {
+  position: absoulte;
+  left: 20%;
+}
+.empty__space {
+  width: 10%;
+}
+
+.diff-code-delete::before {
+  content: " -  ";
+}
+.diff-code-insert:before {
+  content: " +  ";
+}
+
+
+.diff-code-normal::before{
+  content:"    "
+}
+
+.diff td {
+  padding: 0px 10px;
+}
+
+.diff-code {
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+}
+
+/* .diff-line-hover-old.diff-gutter::after,
+.diff-line-hover-new.diff-gutter::after,
+.diff-unified .diff-line:hover .diff-gutter::after {
+  position: absolute;
+  font-family: "FontAwesome";
+  content: "\f0fe";
+  color: #2f69f4;
+  font-size: 17px;
+  margin-left: 3px;
+  transition: font-size 0.1s;
+
+
+} */
+/* .diff-line-hover-old.diff-gutter::after:hover,
+.diff-line-hover-new.diff-gutter::after:hover,
+.diff-unified .diff-line:hover .diff-gutter::after {
+  position: absolute;
+  font-family: "FontAwesome";
+  content: "\f0fe";
+  color: #2f69f4;
+  transform: scale(1.5);
+} */
+
+textarea.mde-text {
+  font-size: 14px !important;
+}
+
+.mde-header .mde-tabs button {
+  font-size: 17px !important;
+  font-family: Source Code Pro !important;
+}
+
+.comment {
+  font-family: Source Code Pro !important;
+  padding: 16px;
+  border: 1px solid #eaecef;
+  display: flex;
+  align-items: flex-start;
+  padding-left: 23px;
+}
+
+.diff-widget-content {
+  padding: 0 !important;
+}
+
+.image_author {
+  width: 25px;
+  height: 29px;
+  margin-right: 10px;
+  vertical-align: text-top;
+  margin-top: 13px;
+}
+
+.author_name{
+  width: 100%;
+}
+
+.author_box{
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+}
+
+
+.author_container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.icons_box svg{
+  margin: 0 9px;
 }
