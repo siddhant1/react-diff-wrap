@@ -1,11 +1,18 @@
 import { mapValues } from "lodash";
 import React from "react";
-import { computeNewLineNumber, computeOldLineNumber, Decoration, Diff, getChangeKey, Hunk, parseDiff } from "react-diff-view";
+import {
+  computeNewLineNumber,
+  computeOldLineNumber,
+  Decoration,
+  Diff,
+  getChangeKey,
+  Hunk,
+  parseDiff
+} from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
 import { Conversation, useConversations } from "./comments";
 import "./differ.css";
-
 
 const changeToString = change => {
   console.log(change);
