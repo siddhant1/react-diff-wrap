@@ -1,12 +1,12 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import Differ from "./Differ";
+import HrDiffWrap from "./HrDiffWrap";
 
 function App() {
   return (
     <div>
-      <Differ />
+      <HrDiffWrap />
     </div>
   );
 }

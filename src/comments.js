@@ -5,7 +5,6 @@ import { Edit, Delete } from "react-feather";
 import * as Showdown from "showdown";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import ReactMde from "react-mde";
-import {PrimaryButton} from 'ui-kit/lib'
 
 export const useConversations = () => {
   const [conversations, dispatch] = useImmer((state, action) => {
@@ -14,10 +13,19 @@ export const useConversations = () => {
         state[action.payload.key] = { comments: [] };
         break;
       case "COMMENT": {
-        console.log(action.payload);
         const { key, content } = action.payload;
         const conversation = state[key];
         conversation.comments.push(content);
+        break;
+      }
+      case "DELETE": {
+        const { key } = action.payload;
+        delete state[key];
+        break;
+      }
+      case "EDIT": {
+        const { key } = action.payload;
+        state[key] = { comments: [] };
         break;
       }
       default:
@@ -32,7 +40,19 @@ export const useConversations = () => {
     (key, content) => dispatch({ type: "COMMENT", payload: { key, content } }),
     [dispatch]
   );
-  return [conversations, { initConversation, addComment }];
+
+  const deleteComment = useCallback(
+    key => dispatch({ type: "DELETE", payload: { key } }),
+    [dispatch]
+  );
+  const editComment = useCallback(
+    key => dispatch({ type: "EDIT", payload: { key } }),
+    [dispatch]
+  );
+  return [
+    conversations,
+    { initConversation, addComment, deleteComment, editComment }
+  ];
 };
 
 const converter = new Showdown.Converter({
@@ -42,7 +62,7 @@ const converter = new Showdown.Converter({
   tasklists: true
 });
 
-const Comment = ({ content }) => (
+const Comment = ({ content, deleteComment, changeKey, editComment }) => (
   <div className="comment">
     <div className="author_box">
       <img
@@ -55,13 +75,13 @@ const Comment = ({ content }) => (
       <div className="author_container">
         <p>Daniel</p>
         <div className="icons_box">
-          <Edit size="15" />
-          <Delete size="15" />
+          <Edit onClick={() => editComment(changeKey)} size="15" />
+          <Delete onClick={() => deleteComment(changeKey)} size="15" />
         </div>
       </div>
-      <div 
+      <div
         style={{
-            marginTop:'-19px'
+          marginTop: "-19px"
         }}
         dangerouslySetInnerHTML={{
           __html: converter.makeHtml(content)
@@ -71,36 +91,33 @@ const Comment = ({ content }) => (
   </div>
 );
 
-const Editor = ({ onSubmit }) => {
-  const [value, setValue] = useState("");
-  const updateValue = useCallback(e => setValue(e.target.value), []);
-  const submitDraft = useCallback(() => {
-    onSubmit(value);
-    setValue("");
-  }, [value, onSubmit]);
-
-  return (
-    <div id="editor">
-      <Input.TextArea rows={4} value={value} onChange={updateValue} />
-
-      <Button className="submit" type="primary" onClick={submitDraft}>
-        Add Comment
-      </Button>
-    </div>
-  );
-};
-
-export const Conversation = ({ changeKey, comments, onSubmitComment }) => {
+export const Conversation = ({
+  changeKey,
+  comments,
+  onSubmitComment,
+  deleteComment,
+  editComment
+}) => {
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const submitComment = useCallback(
     content => onSubmitComment(changeKey, content),
     [changeKey, onSubmitComment]
   );
+
+
   return (
     <div className="conversation">
       {comments.length >= 1 &&
-        comments.map((comment, i) => <Comment key={i} content={comment} />)}
+        comments.map((comment, i) => (
+          <Comment
+            changeKey={changeKey}
+            deleteComment={deleteComment}
+            editComment={editComment}
+            key={i}
+            content={comment}
+          />
+        ))}
 
       {comments.length === 0 && (
         <div className="container">
@@ -124,6 +141,13 @@ export const Conversation = ({ changeKey, comments, onSubmitComment }) => {
             onClick={() => submitComment(value)}
           >
             Add Comment
+          </Button>
+          <Button
+            className="submit"
+            type="primary"
+            onClick={() => deleteComment(changeKey)}
+          >
+            Cancel
           </Button>
         </div>
       )}

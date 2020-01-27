@@ -1,8 +1,6 @@
 import { mapValues } from "lodash";
 import React from "react";
 import {
-  computeNewLineNumber,
-  computeOldLineNumber,
   Decoration,
   Diff,
   getChangeKey,
@@ -12,19 +10,11 @@ import {
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
 import { Conversation, useConversations } from "./comments";
+import { useBoolean } from "./comments";
 import "./differ.css";
 
-const changeToString = change => {
-  console.log(change);
-  if (!change.isInsert) {
-    return computeOldLineNumber(change);
-  }
-  return computeNewLineNumber(change);
-};
-
-function Differ(props) {
+function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
-  const [comments, setComments] = React.useState({});
   React.useEffect(() => {
     fetch(
       "https://raw.githubusercontent.com/siddhant1/test_hosting/master/my.diff"
@@ -35,7 +25,12 @@ function Differ(props) {
       });
   }, []);
 
-  const [conversations, { initConversation, addComment }] = useConversations();
+  const [
+    conversations,
+    { initConversation, addComment, deleteComment, editComment }
+  ] = useConversations();
+
+  console.log(conversations)
 
   const widgets = mapValues(conversations, ({ comments }, changeKey) => {
     return (
@@ -43,6 +38,8 @@ function Differ(props) {
         changeKey={changeKey}
         comments={comments}
         onSubmitComment={addComment}
+        deleteComment={deleteComment}
+        editComment={editComment}
       />
     );
   });
@@ -52,6 +49,8 @@ function Differ(props) {
       const key = getChangeKey(change);
       if (!conversations[key]) {
         initConversation(key);
+      } else {
+        editComment(key);
       }
     }
   };
@@ -123,4 +122,4 @@ function Differ(props) {
   );
 }
 
-export default Differ;
+export default HrDiffWrap;
