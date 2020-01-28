@@ -1,12 +1,11 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import HrDiffWrap from "./Differ";
+import HrDiffWrap from "./DiffWrap";
 
 function App() {
+  const [state, setState] = React.useState("unified");
   return (
     <div>
-      <HrDiffWrap />
+      <HrDiffWrap key={state} type={state} />
     </div>
   );
 }

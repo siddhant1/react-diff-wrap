@@ -9,12 +9,18 @@ import {
 } from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
-import { Conversation, useConversations } from "./comments";
-import { useBoolean } from "./comments";
-import "./differ.css";
+import { Conversation } from "./Conversation";
+import { useConversations } from "./hooks.js/useConversation";
+import "./index.css";
 
 function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
+  const [type, setType] = React.useState(props.type);
+
+  if (type === "unified") {
+    require("./gutter.css");
+  }
+
   React.useEffect(() => {
     fetch(
       "https://raw.githubusercontent.com/siddhant1/test_hosting/master/my.diff"
@@ -27,10 +33,8 @@ function HrDiffWrap(props) {
 
   const [
     conversations,
-    { initConversation, addComment, deleteComment, editComment }
+    { initConversation, addComment, deleteComment, editComment, closeEditor }
   ] = useConversations();
-
-  console.log(conversations)
 
   const widgets = mapValues(conversations, ({ comments }, changeKey) => {
     return (
@@ -40,6 +44,7 @@ function HrDiffWrap(props) {
         onSubmitComment={addComment}
         deleteComment={deleteComment}
         editComment={editComment}
+        closeEditor={closeEditor}
       />
     );
   });
@@ -76,12 +81,12 @@ function HrDiffWrap(props) {
     return <>{wrapInAnchor(renderDefault())}</>;
   };
 
-  const renderFile = ({ oldRevision, newRevision, type, hunks }) => {
+  const renderFile = ({ oldRevision, newRevision, type: difftype, hunks }) => {
     return (
       <Diff
         key={oldRevision + "-" + newRevision}
-        viewType="split"
-        diffType={type}
+        viewType={type}
+        diffType={difftype}
         hunks={hunks}
         renderGutter={renderGutter}
       >
