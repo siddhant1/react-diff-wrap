@@ -65,7 +65,7 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              if (comments[0].trim() === "") {
+              if (comments[0] && comments[0].trim() === "") {
                 deleteComment(changeKey);
               } else {
                 cancelAction(changeKey);

@@ -15,11 +15,22 @@ import "./index.css";
 
 function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
-  const [type, setType] = React.useState("unified");
+  const [type, setType] = React.useState("split");
 
-  if (type === "unified") {
-    require("./gutter.css");
-  }
+  React.useEffect(() => {
+    const element = document.querySelector("#style-root");
+    const newEl = `
+    .diff-line td:first-child i::before {
+      opacity: ${props.type === "unified" ? "0" : "1"};
+    }    
+    `;
+    element.innerHTML=""
+    const css = document.createElement("style");
+    css.innerHTML = "";
+    css.appendChild(document.createTextNode(newEl));
+    element.appendChild(css)
+    // element && element.appendChild(newEl);
+  }, [props.type]);
 
   React.useEffect(() => {
     fetch(
@@ -89,7 +100,7 @@ function HrDiffWrap(props) {
     return (
       <Diff
         key={oldRevision + "-" + newRevision}
-        viewType={type}
+        viewType={props.type}
         diffType={difftype}
         hunks={hunks}
         renderGutter={renderGutter}
