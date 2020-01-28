@@ -9,13 +9,13 @@ import {
 } from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
-import { Conversation } from "./Conversation";
 import { useConversations } from "./hooks.js/useConversation";
+import { Conversation } from "./Conversation";
 import "./index.css";
 
 function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
-  const [type, setType] = React.useState(props.type);
+  const [type, setType] = React.useState("unified");
 
   if (type === "unified") {
     require("./gutter.css");
@@ -33,21 +33,25 @@ function HrDiffWrap(props) {
 
   const [
     conversations,
-    { initConversation, addComment, deleteComment, editComment, closeEditor }
+    { initConversation, addComment, deleteComment, editComment, cancelAction }
   ] = useConversations();
 
-  const widgets = mapValues(conversations, ({ comments }, changeKey) => {
-    return (
-      <Conversation
-        changeKey={changeKey}
-        comments={comments}
-        onSubmitComment={addComment}
-        deleteComment={deleteComment}
-        editComment={editComment}
-        closeEditor={closeEditor}
-      />
-    );
-  });
+  const widgets = mapValues(
+    conversations,
+    ({ comments, editMode }, changeKey) => {
+      return (
+        <Conversation
+          editMode={editMode}
+          changeKey={changeKey}
+          comments={comments}
+          onSubmitComment={addComment}
+          deleteComment={deleteComment}
+          editComment={editComment}
+          cancelAction={cancelAction}
+        />
+      );
+    }
+  );
 
   const gutterEvents = {
     onClick({ change }) {

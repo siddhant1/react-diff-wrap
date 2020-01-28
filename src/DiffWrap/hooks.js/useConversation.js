@@ -1,39 +1,42 @@
-import { useCallback, useReducer } from "react";
+import React, { useState, useCallback } from "react";
+import { useImmer } from "./useImmer";
 
 export const useConversations = () => {
-  const [conversations, dispatch] = useReducer((state, action) => {
-    switch (action.type) {
-      case "INIT":
-        return { ...state, [action.payload.key]: { comments: [] } };
-      case "COMMENT": {
-        const { key, content } = action.payload;
-        return { ...state, [key]: { comments: [content] } };
-      }
-      case "DELETE": {
-        const dup = { ...state };
-        delete dup[action.payload.key];
-        return dup;
-      }
-      case "EDIT": {
-        const { key } = action.payload;
-        return { ...state, [key]: { comments: [] } };
-      }
-      case "CLOSE": {
-        if (action.payload.content === "") {
-          const dup = { ...state };
-          delete dup[action.payload.key];
-          return dup;
-        } else {
-          return {
-            ...state,
-            [action.payload.key]: { comments: [action.payload.content] }
-          };
+  const [conversations, dispatch] = useImmer(
+    (state, action) => {
+      switch (action.type) {
+        case "INIT":
+          state[action.payload.key] = { comments: [], editMode: true };
+          break;
+        case "COMMENT": {
+          const { key, content } = action.payload;
+          const conversation = state[key];
+          conversation.comments = [];
+          conversation.comments.push(content);
+          conversation.editMode = false;
+          break;
         }
+        case "DELETE": {
+          const { key } = action.payload;
+          delete state[key];
+          break;
+        }
+        case "EDIT": {
+          const { key } = action.payload;
+          state[key] = { ...state[key], editMode: true };
+          break;
+        }
+        case "CANCEL": {
+          const { key } = action.payload;
+          state[key] = { ...state[key], editMode: false };
+          break;
+        }
+        default:
+          break;
       }
-      default:
-        break;
-    }
-  }, {});
+    },
+    { comments: [], isEditorOpen: false }
+  );
   const initConversation = useCallback(
     key => dispatch({ type: "INIT", payload: { key } }),
     [dispatch]
@@ -52,12 +55,12 @@ export const useConversations = () => {
     [dispatch]
   );
 
-  const closeEditor = useCallback(
-    (key, content) => dispatch({ type: "CLOSE", payload: { key, content } }),
+  const cancelAction = useCallback(
+    key => dispatch({ type: "CANCEL", payload: { key } }),
     [dispatch]
   );
   return [
     conversations,
-    { initConversation, addComment, deleteComment, editComment, closeEditor }
+    { initConversation, addComment, deleteComment, editComment, cancelAction }
   ];
 };

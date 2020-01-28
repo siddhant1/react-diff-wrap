@@ -8,10 +8,11 @@ import converter from "./utils";
 export const Conversation = ({
   changeKey,
   comments,
+  editMode,
   onSubmitComment,
   deleteComment,
   editComment,
-  closeEditor
+  cancelAction
 }) => {
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
@@ -23,6 +24,7 @@ export const Conversation = ({
   return (
     <div className="conversation">
       {comments.length >= 1 &&
+        !editMode &&
         comments.map((comment, i) => (
           <Comment
             changeKey={changeKey}
@@ -33,8 +35,8 @@ export const Conversation = ({
           />
         ))}
 
-      {comments.length === 0 && (
-        <div className="container">
+      {editMode && (
+        <div className="container mde-container">
           <ReactMde
             value={value}
             onChange={setValue}
@@ -49,14 +51,27 @@ export const Conversation = ({
           <Button
             className="submit"
             type="primary"
-            onClick={() => submitComment(value)}
+            onClick={() => {
+              if (value === "") {
+                deleteComment(changeKey);
+              } else {
+                submitComment(value);
+              }
+            }}
           >
             Add Comment
           </Button>
           <Button
             className="submit"
             type="primary"
-            onClick={() => closeEditor(changeKey, value)}
+            onClick={() => {
+              if (comments[0] === "") {
+                deleteComment(changeKey);
+              } else {
+                cancelAction(changeKey);
+              }
+              setValue(comments[0]);
+            }}
           >
             Cancel
           </Button>
