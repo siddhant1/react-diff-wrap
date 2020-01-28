@@ -52,7 +52,7 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              if (value === "") {
+              if (value.trim() === "") {
                 deleteComment(changeKey);
               } else {
                 submitComment(value);
@@ -65,7 +65,7 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              if (comments[0] === "") {
+              if (comments[0].trim() === "") {
                 deleteComment(changeKey);
               } else {
                 cancelAction(changeKey);
