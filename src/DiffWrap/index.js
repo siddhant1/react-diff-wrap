@@ -24,12 +24,11 @@ function HrDiffWrap(props) {
       opacity: ${props.type === "unified" ? "0" : "1"};
     }    
     `;
-    element.innerHTML=""
+    element.innerHTML = "";
     const css = document.createElement("style");
     css.innerHTML = "";
     css.appendChild(document.createTextNode(newEl));
-    element.appendChild(css)
-    // element && element.appendChild(newEl);
+    element.appendChild(css);
   }, [props.type]);
 
   React.useEffect(() => {

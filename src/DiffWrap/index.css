@@ -55,7 +55,7 @@
 }
 .flex {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 .gutter__line-no {
   text-align: right;
@@ -148,7 +148,7 @@ textarea.mde-text {
 
 .author_box {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 }
 

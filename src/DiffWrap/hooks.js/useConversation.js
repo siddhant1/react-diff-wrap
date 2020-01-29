@@ -2,41 +2,38 @@ import React, { useState, useCallback } from "react";
 import { useImmer } from "./useImmer";
 
 export const useConversations = () => {
-  const [conversations, dispatch] = useImmer(
-    (state, action) => {
-      switch (action.type) {
-        case "INIT":
-          state[action.payload.key] = { comments: [], editMode: true };
-          break;
-        case "COMMENT": {
-          const { key, content } = action.payload;
-          const conversation = state[key];
-          conversation.comments = [];
-          conversation.comments.push(content);
-          conversation.editMode = false;
-          break;
-        }
-        case "DELETE": {
-          const { key } = action.payload;
-          delete state[key];
-          break;
-        }
-        case "EDIT": {
-          const { key } = action.payload;
-          state[key] = { ...state[key], editMode: true };
-          break;
-        }
-        case "CANCEL": {
-          const { key } = action.payload;
-          state[key] = { ...state[key], editMode: false };
-          break;
-        }
-        default:
-          break;
+  const [conversations, dispatch] = useImmer((state, action) => {
+    switch (action.type) {
+      case "INIT":
+        state[action.payload.key] = { comments: [], editMode: true };
+        break;
+      case "COMMENT": {
+        const { key, content } = action.payload;
+        const conversation = state[key];
+        conversation.comments = [];
+        conversation.comments.push(content);
+        conversation.editMode = false;
+        break;
       }
-    },
-    { comments: [], isEditorOpen: false }
-  );
+      case "DELETE": {
+        const { key } = action.payload;
+        delete state[key];
+        break;
+      }
+      case "EDIT": {
+        const { key } = action.payload;
+        state[key] = { ...state[key], editMode: true };
+        break;
+      }
+      case "CANCEL": {
+        const { key } = action.payload;
+        state[key] = { ...state[key], editMode: false };
+        break;
+      }
+      default:
+        break;
+    }
+  }, {});
   const initConversation = useCallback(
     key => dispatch({ type: "INIT", payload: { key } }),
     [dispatch]
