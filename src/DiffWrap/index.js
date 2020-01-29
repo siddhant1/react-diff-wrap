@@ -2,7 +2,7 @@ import { mapValues } from "lodash";
 import React from "react";
 import { Decoration, Diff, Hunk, parseDiff, tokenize } from "react-diff-view";
 import "react-diff-view/style/index.css";
-import { ChevronRight } from "react-feather";
+import { ChevronRight, ChevronDown } from "react-feather";
 import { useConversations } from "./hooks.js/useConversation";
 import { Conversation } from "./Conversation";
 import "./index.css";
@@ -23,6 +23,7 @@ export function getChangeKey(change, file) {
 function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
   const [type, setType] = React.useState("split");
+  const [closedFiles, setClosedFiles] = React.useState({});
 
   React.useEffect(() => {
     const element = document.querySelector("#style-root");
@@ -36,6 +37,7 @@ function HrDiffWrap(props) {
     css.innerHTML = "";
     css.appendChild(document.createTextNode(newEl));
     element.appendChild(css);
+    setClosedFiles({});
   }, [props.type]);
 
   React.useEffect(() => {
@@ -74,6 +76,17 @@ function HrDiffWrap(props) {
 
   // console.log(widgets)
 
+  const closeFile = filePath => {
+    const duplicateClosedFiles = { ...closedFiles };
+    duplicateClosedFiles[filePath] = 1;
+    setClosedFiles(duplicateClosedFiles);
+  };
+
+  const openFile = filePath => {
+    const duplicateClosedFiles = { ...closedFiles };
+    duplicateClosedFiles[filePath] = 0;
+    setClosedFiles(duplicateClosedFiles);
+  };
   const widgets = file => {
     var widgetsObj = {};
     for (let key in conversations) {
@@ -158,13 +171,23 @@ function HrDiffWrap(props) {
     <div>
       {files.map(file => {
         return (
-          <>
+          <div className="file">
             <div className="file_name">
-              <ChevronRight size={"20"} />
+              {!closedFiles[file.newPath] ? (
+                <ChevronDown
+                  onClick={() => closeFile(file.newPath)}
+                  size={"20"}
+                />
+              ) : (
+                <ChevronRight
+                  onClick={() => openFile(file.newPath)}
+                  size={"20"}
+                />
+              )}
               {file.newPath}
             </div>
-            {renderFile(file)}
-          </>
+            {!closedFiles[file.newPath] && renderFile(file)}
+          </div>
         );
       })}
     </div>

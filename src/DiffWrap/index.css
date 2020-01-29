@@ -195,3 +195,21 @@ textarea.mde-text {
   transform: scale(1);
   transition: transform 0.1s ease-in-out;
 }
+
+.file_name{
+  position: sticky;
+  top: 0px;
+}
+
+.file_name svg{
+  cursor: pointer;
+  margin-right: 10px;
+}
+.file_name svg:hover{
+  color: #0366d6;
+  cursor: pointer;
+}
+
+.file{
+  margin-bottom: 20px;
+}
