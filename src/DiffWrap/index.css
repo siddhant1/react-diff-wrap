@@ -16,6 +16,10 @@
   --diff-omit-gutter-line-color: #cb2a1d;
 }
 
+body{
+  font-size: 13px;
+}
+
 .diff-decoration-content {
   background-color: #f1f8ff;
   color: black;

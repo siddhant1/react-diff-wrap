@@ -1,11 +1,13 @@
 import { mapValues } from "lodash";
 import React from "react";
-import { Decoration, Diff, Hunk, parseDiff,getChangeKey as diffGetChangeKey } from "react-diff-view";
+import { Decoration, Diff, Hunk, parseDiff, tokenize } from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
 import { useConversations } from "./hooks.js/useConversation";
 import { Conversation } from "./Conversation";
 import "./index.css";
+import * as refractor from "refractor";
+import "prism-themes/themes/prism-ghcolors.css";
 
 export function getChangeKey(change, file) {
   if (!change) throw new Error("change is not provided");
@@ -38,7 +40,7 @@ function HrDiffWrap(props) {
 
   React.useEffect(() => {
     fetch(
-      "https://raw.githubusercontent.com/siddhant1/test_hosting/master/my.diff"
+      "https://raw.githubusercontent.com/siddhant1/test_hosting/58fcc99e7731ecac592146b5b80e43cecea469da/my.diff"
     )
       .then(d => d.text())
       .then(res => {
@@ -72,11 +74,11 @@ function HrDiffWrap(props) {
 
   // console.log(widgets)
 
-  const widgets = (file) => {
+  const widgets = file => {
     var widgetsObj = {};
     for (let key in conversations) {
       const [newKey, fileName] = key.split("+");
-      if(fileName !== file){
+      if (fileName !== file) {
         continue;
       }
       widgetsObj[newKey] = (
@@ -108,7 +110,6 @@ function HrDiffWrap(props) {
   // };
 
   const files = parseDiff(diff, { nearbySequences: "zip" });
-
   const renderGutter = ({
     change,
     side,
@@ -128,6 +129,9 @@ function HrDiffWrap(props) {
     return <>{wrapInAnchor(renderDefault())}</>;
   };
 
+  const memoCheck = files[1] && files[1].hunks;
+  console.log(memoCheck);
+
   const renderFile = ({
     oldRevision,
     newRevision,
@@ -135,41 +139,21 @@ function HrDiffWrap(props) {
     hunks,
     newPath
   }) => {
+    console.log({ hunks });
     return (
-      <Diff
-        key={oldRevision + "-" + newRevision}
-        viewType={props.type}
+      <DiffWrap
+        oldRevision={oldRevision}
+        newRevision={newRevision}
         diffType={difftype}
         hunks={hunks}
+        newPath={newPath}
+        viewType={props.type}
         renderGutter={renderGutter}
-      >
-        {hunks =>
-          hunks.map(hunk => {
-            return (
-              <>
-                <Decoration>
-                  <div>{hunk.content}</div>
-                </Decoration>
-                <Hunk
-                  key={"+" + hunk.content}
-                  hunk={hunk}
-                  gutterEvents={{
-                    onClick({ change }) {
-                      const key = getChangeKey(change, newPath);
-                      if (!conversations[key]) {
-                        initConversation(key);
-                      } else {
-                        editComment(key);
-                      }
-                    }
-                  }}
-                  widgets={widgets(newPath)}
-                />
-              </>
-            );
-          })
-        }
-      </Diff>
+        conversations={conversations}
+        widgets={widgets}
+        initConversation={initConversation}
+        editComment={editComment}
+      />
     );
   };
   return (
@@ -188,5 +172,66 @@ function HrDiffWrap(props) {
     </div>
   );
 }
+
+const DiffWrap = ({
+  oldRevision,
+  newRevision,
+  difftype,
+  hunks,
+  newPath,
+  viewType,
+  renderGutter,
+  conversations,
+  widgets,
+  initConversation,
+  editComment
+}) => {
+  const tokens = React.useMemo(() => {
+    const options = {
+      refractor,
+      highlight: true,
+      language: "typescript"
+    };
+
+    return tokenize(hunks, options);
+  }, [hunks]);
+  return (
+    <Diff
+      key={oldRevision + "-" + newRevision}
+      viewType={viewType}
+      diffType={difftype}
+      hunks={hunks}
+      renderGutter={renderGutter}
+      tokens={tokens}
+    >
+      {hunks =>
+        hunks.map(hunk => {
+          return (
+            <>
+              <Decoration>
+                <div>{hunk.content}</div>
+              </Decoration>
+              <Hunk
+                key={"+" + hunk.content}
+                hunk={hunk}
+                gutterEvents={{
+                  onClick({ change }) {
+                    const key = getChangeKey(change, newPath);
+                    if (!conversations[key]) {
+                      initConversation(key);
+                    } else {
+                      editComment(key);
+                    }
+                  }
+                }}
+                widgets={widgets(newPath)}
+              />
+            </>
+          );
+        })
+      }
+    </Diff>
+  );
+};
 
 export default HrDiffWrap;
