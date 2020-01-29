@@ -12,7 +12,8 @@ export const Conversation = ({
   onSubmitComment,
   deleteComment,
   editComment,
-  cancelAction
+  cancelAction,
+  file
 }) => {
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");

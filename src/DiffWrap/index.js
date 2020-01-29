@@ -1,17 +1,22 @@
 import { mapValues } from "lodash";
 import React from "react";
-import {
-  Decoration,
-  Diff,
-  getChangeKey,
-  Hunk,
-  parseDiff
-} from "react-diff-view";
+import { Decoration, Diff, Hunk, parseDiff,getChangeKey as diffGetChangeKey } from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { ChevronRight } from "react-feather";
 import { useConversations } from "./hooks.js/useConversation";
 import { Conversation } from "./Conversation";
 import "./index.css";
+
+export function getChangeKey(change, file) {
+  if (!change) throw new Error("change is not provided");
+  var isNormal = change.isNormal,
+    isInsert = change.isInsert,
+    lineNumber = change.lineNumber,
+    oldLineNumber = change.oldLineNumber;
+  return isNormal
+    ? "N" + oldLineNumber + "+" + file
+    : (isInsert ? "I" : "D") + lineNumber + "+" + file;
+}
 
 function HrDiffWrap(props) {
   const [diff, setDiff] = React.useState("");
@@ -46,14 +51,40 @@ function HrDiffWrap(props) {
     { initConversation, addComment, deleteComment, editComment, cancelAction }
   ] = useConversations();
 
-  const widgets = mapValues(
-    conversations,
-    ({ comments, editMode }, changeKey) => {
-      return (
+  // const widgets = mapValues(
+  //   conversations,
+  //   ({ comments, editMode }, changeKey) => {
+  //     const [key, fileKey] = changeKey.split("+");
+  //     return (
+  //       <Conversation
+  //         file={fileKey}
+  //         editMode={editMode}
+  //         changeKey={key}
+  //         comments={comments}
+  //         onSubmitComment={addComment}
+  //         deleteComment={deleteComment}
+  //         editComment={editComment}
+  //         cancelAction={cancelAction}
+  //       />
+  //     );
+  //   }
+  // );
+
+  // console.log(widgets)
+
+  const widgets = (file) => {
+    var widgetsObj = {};
+    for (let key in conversations) {
+      const [newKey, fileName] = key.split("+");
+      if(fileName !== file){
+        continue;
+      }
+      widgetsObj[newKey] = (
         <Conversation
-          editMode={editMode}
-          changeKey={changeKey}
-          comments={comments}
+          file={fileName}
+          editMode={conversations[key].editMode}
+          changeKey={key}
+          comments={conversations[key].comments}
           onSubmitComment={addComment}
           deleteComment={deleteComment}
           editComment={editComment}
@@ -61,18 +92,20 @@ function HrDiffWrap(props) {
         />
       );
     }
-  );
-
-  const gutterEvents = {
-    onClick({ change }) {
-      const key = getChangeKey(change);
-      if (!conversations[key]) {
-        initConversation(key);
-      } else {
-        editComment(key);
-      }
-    }
+    return widgetsObj;
   };
+
+  // const gutterEvents = {
+  //   onClick({ change }) {
+  //     console.log(arguments);
+  //     const key = getChangeKey(change);
+  //     if (!conversations[key]) {
+  //       initConversation(key);
+  //     } else {
+  //       editComment(key);
+  //     }
+  //   }
+  // };
 
   const files = parseDiff(diff, { nearbySequences: "zip" });
 
@@ -95,7 +128,13 @@ function HrDiffWrap(props) {
     return <>{wrapInAnchor(renderDefault())}</>;
   };
 
-  const renderFile = ({ oldRevision, newRevision, type: difftype, hunks }) => {
+  const renderFile = ({
+    oldRevision,
+    newRevision,
+    type: difftype,
+    hunks,
+    newPath
+  }) => {
     return (
       <Diff
         key={oldRevision + "-" + newRevision}
@@ -114,8 +153,17 @@ function HrDiffWrap(props) {
                 <Hunk
                   key={"+" + hunk.content}
                   hunk={hunk}
-                  gutterEvents={gutterEvents}
-                  widgets={widgets}
+                  gutterEvents={{
+                    onClick({ change }) {
+                      const key = getChangeKey(change, newPath);
+                      if (!conversations[key]) {
+                        initConversation(key);
+                      } else {
+                        editComment(key);
+                      }
+                    }
+                  }}
+                  widgets={widgets(newPath)}
                 />
               </>
             );
