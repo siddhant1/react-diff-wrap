@@ -130,7 +130,6 @@ function HrDiffWrap(props) {
   };
 
   const memoCheck = files[1] && files[1].hunks;
-  console.log(memoCheck);
 
   const renderFile = ({
     oldRevision,
@@ -139,7 +138,6 @@ function HrDiffWrap(props) {
     hunks,
     newPath
   }) => {
-    console.log({ hunks });
     return (
       <DiffWrap
         oldRevision={oldRevision}

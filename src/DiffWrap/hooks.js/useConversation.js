@@ -5,6 +5,7 @@ export const useConversations = () => {
   const [conversations, dispatch] = useImmer((state, action) => {
     switch (action.type) {
       case "INIT":
+        console.log(action.payload.key)
         state[action.payload.key] = { comments: [], editMode: true };
         break;
       case "COMMENT": {

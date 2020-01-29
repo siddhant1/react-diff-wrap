@@ -16,7 +16,7 @@ function App() {
       >
         Change view type
       </button>
-      <HrDiffWrap key={state} type={state} />
+      <HrDiffWrap type={state} />
     </div>
   );
 }
