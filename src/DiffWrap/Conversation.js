@@ -15,7 +15,7 @@ export const Conversation = ({
   cancelAction,
   file
 }) => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(comments[0] || "");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const submitComment = useCallback(
     content => onSubmitComment(changeKey, content),

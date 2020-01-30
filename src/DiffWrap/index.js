@@ -142,8 +142,6 @@ function HrDiffWrap(props) {
     return <>{wrapInAnchor(renderDefault())}</>;
   };
 
-  const memoCheck = files[1] && files[1].hunks;
-
   const renderFile = ({
     oldRevision,
     newRevision,
