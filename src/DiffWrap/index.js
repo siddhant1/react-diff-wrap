@@ -20,16 +20,31 @@ export function getChangeKey(change, file) {
     : (isInsert ? "I" : "D") + lineNumber + "+" + file;
 }
 
-function HrDiffWrap(props) {
-  const [diff, setDiff] = React.useState("");
-  const [type, setType] = React.useState("split");
+function HrDiffWrap({
+  type,
+  patch: diff,
+  enableComment,
+  onComment,
+  onCommentDelete,
+  comments,
+  enableSettings
+}) {
   const [closedFiles, setClosedFiles] = React.useState({});
+  const [commentEditMode, setCommentEditMode] = React.useState({});
+
+  const setEditOff = changeKey => {
+    const dup = {
+      ...commentEditMode,
+      [changeKey]: false
+    };
+    setCommentEditMode(dup);
+  };
 
   React.useEffect(() => {
     const element = document.querySelector("#style-root");
     const newEl = `
     .diff-line td:first-child i::before {
-      opacity: ${props.type === "unified" ? "0" : "1"};
+      opacity: ${type === "unified" ? "0" : "1"};
     }    
     `;
     element.innerHTML = "";
@@ -38,43 +53,7 @@ function HrDiffWrap(props) {
     css.appendChild(document.createTextNode(newEl));
     element.appendChild(css);
     setClosedFiles({});
-  }, [props.type]);
-
-  React.useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/siddhant1/test_hosting/58fcc99e7731ecac592146b5b80e43cecea469da/my.diff"
-    )
-      .then(d => d.text())
-      .then(res => {
-        setDiff(res);
-      });
-  }, []);
-
-  const [
-    conversations,
-    { initConversation, addComment, deleteComment, editComment, cancelAction }
-  ] = useConversations();
-
-  // const widgets = mapValues(
-  //   conversations,
-  //   ({ comments, editMode }, changeKey) => {
-  //     const [key, fileKey] = changeKey.split("+");
-  //     return (
-  //       <Conversation
-  //         file={fileKey}
-  //         editMode={editMode}
-  //         changeKey={key}
-  //         comments={comments}
-  //         onSubmitComment={addComment}
-  //         deleteComment={deleteComment}
-  //         editComment={editComment}
-  //         cancelAction={cancelAction}
-  //       />
-  //     );
-  //   }
-  // );
-
-  // console.log(widgets)
+  }, [type]);
 
   const closeFile = filePath => {
     const duplicateClosedFiles = { ...closedFiles };
@@ -87,42 +66,62 @@ function HrDiffWrap(props) {
     duplicateClosedFiles[filePath] = 0;
     setClosedFiles(duplicateClosedFiles);
   };
+
+  const initConversation = changeKey => {
+    const duplicate = {
+      ...commentEditMode,
+      [changeKey]: true
+    };
+    setCommentEditMode(duplicate);
+  };
+
   const widgets = file => {
     var widgetsObj = {};
-    for (let key in conversations) {
+    for (let key in comments) {
       const [newKey, fileName] = key.split("+");
       if (fileName !== file) {
         continue;
       }
       widgetsObj[newKey] = (
         <Conversation
+          enableComment={enableComment}
           file={fileName}
-          editMode={conversations[key].editMode}
+          setEditOff={setEditOff}
+          editMode={commentEditMode[key]}
           changeKey={key}
-          comments={conversations[key].comments}
-          onSubmitComment={addComment}
-          deleteComment={deleteComment}
-          editComment={editComment}
-          cancelAction={cancelAction}
+          comments={comments[key] || []}
+          onComment={onComment}
+          onCommentDelete={onCommentDelete}
+          initConversation={initConversation}
+        />
+      );
+    }
+
+    for (let key in commentEditMode) {
+      const [newKey, fileName] = key.split("+");
+      if (fileName !== file) {
+        continue;
+      }
+      widgetsObj[newKey] = (
+        <Conversation
+          enableComment={enableComment}
+          file={fileName}
+          editMode={commentEditMode[key]}
+          changeKey={key}
+          setEditOff={setEditOff}
+          comments={comments[key] || []}
+          onComment={onComment}
+          onCommentDelete={onCommentDelete}
+          initConversation={initConversation}
         />
       );
     }
     return widgetsObj;
   };
 
-  // const gutterEvents = {
-  //   onClick({ change }) {
-  //     console.log(arguments);
-  //     const key = getChangeKey(change);
-  //     if (!conversations[key]) {
-  //       initConversation(key);
-  //     } else {
-  //       editComment(key);
-  //     }
-  //   }
-  // };
-
+  // do this inside useMemo
   const files = parseDiff(diff, { nearbySequences: "zip" });
+
   const renderGutter = ({
     change,
     side,
@@ -156,12 +155,11 @@ function HrDiffWrap(props) {
         diffType={difftype}
         hunks={hunks}
         newPath={newPath}
-        viewType={props.type}
+        viewType={type}
         renderGutter={renderGutter}
-        conversations={conversations}
+        conversations={comments}
         widgets={widgets}
         initConversation={initConversation}
-        editComment={editComment}
       />
     );
   };
@@ -222,6 +220,7 @@ const DiffWrap = ({
       hunks={hunks}
       renderGutter={renderGutter}
       tokens={tokens}
+      initConversation={initConversation}
     >
       {hunks =>
         hunks.map(hunk => {

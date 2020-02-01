@@ -1,8 +1,15 @@
 import React from "react";
 import { Edit, Delete } from "react-feather";
-import converter from './utils'
+import converter from "./utils";
 
-const Comment = ({ content, deleteComment, changeKey, editComment }) => (
+const Comment = ({
+  content,
+  deleteComment,
+  changeKey,
+  editComment,
+  enableComment,
+  initConversation
+}) => (
   <div className="comment">
     <div className="author_box">
       <img
@@ -14,10 +21,15 @@ const Comment = ({ content, deleteComment, changeKey, editComment }) => (
     <div className="author_name">
       <div className="author_container">
         <p>Daniel</p>
-        <div className="icons_box">
-          <Edit onClick={() => editComment(changeKey)} size="15" />
-          <Delete onClick={() => deleteComment(changeKey)} size="15" />
-        </div>
+        {enableComment && (
+          <div className="icons_box">
+            <Edit onClick={() => initConversation(changeKey)} size="15" />
+            <Delete
+              onClick={() => deleteComment(undefined, changeKey)}
+              size="15"
+            />
+          </div>
+        )}
       </div>
       <div
         style={{

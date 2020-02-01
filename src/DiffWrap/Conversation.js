@@ -13,33 +13,65 @@ export const Conversation = ({
   deleteComment,
   editComment,
   cancelAction,
-  file
+  file,
+  enableComment,
+  onCommentDelete,
+  onComment,
+  setEditOff,
+  initConversation
 }) => {
-  const [value, setValue] = React.useState(comments[0] || "");
+  const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const submitComment = useCallback(
-    content => onSubmitComment(changeKey, content),
-    [changeKey, onSubmitComment]
+    content => onComment(undefined, changeKey, content),
+    [changeKey, onComment]
   );
+  const getValue = () => {
+    if (
+      value &&
+      value.trim() === "" &&
+      comments &&
+      comments.comments &&
+      comments.comments[0] &&
+      comments.comments[0].trim() === ""
+    ) {
+      return value;
+    } else if (
+      value &&
+      value.trim() === "" &&
+      comments &&
+      comments.comments &&
+      comments.comments[0]
+    ) {
+      return comments.comments[0];
+    } else {
+      return value;
+    }
+  };
 
   return (
     <div className="conversation">
-      {comments.length >= 1 &&
-        !editMode &&
-        comments.map((comment, i) => (
-          <Comment
-            changeKey={changeKey}
-            deleteComment={deleteComment}
-            editComment={editComment}
-            key={i}
-            content={comment}
-          />
-        ))}
+      {!editMode &&
+        comments &&
+        comments.comments &&
+        comments.comments.map((comment, i) => {
+          return (
+            <Comment
+              enableComment={enableComment}
+              changeKey={changeKey}
+              deleteComment={onCommentDelete}
+              editComment={onComment}
+              key={i}
+              content={comment}
+              initConversation={initConversation}
+            />
+          );
+        })}
 
-      {editMode && (
+      {editMode && enableComment && (
         <div className="container mde-container">
           <ReactMde
-            value={value}
+            value={getValue()}
             onChange={setValue}
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
@@ -54,9 +86,11 @@ export const Conversation = ({
             type="primary"
             onClick={() => {
               if (value.trim() === "") {
-                deleteComment(changeKey);
+                onCommentDelete(changeKey);
               } else {
-                submitComment(value);
+                submitComment(value).then(res => {
+                  setEditOff(changeKey);
+                });
               }
             }}
           >
@@ -67,11 +101,10 @@ export const Conversation = ({
             type="primary"
             onClick={() => {
               if (comments[0] && comments[0].trim() === "") {
-                deleteComment(changeKey);
+                onCommentDelete(changeKey);
               } else {
-                cancelAction(changeKey);
+                setEditOff(changeKey);
               }
-              setValue(comments[0]);
             }}
           >
             Cancel
