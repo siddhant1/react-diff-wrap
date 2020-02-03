@@ -29,7 +29,7 @@ function HrDiffWrap({
 }) {
   const [closedFiles, setClosedFiles] = React.useState({});
   const [commentEditMode, setCommentEditMode] = React.useState({});
-  const files = React.useRef(parseDiff(diff, { nearbySequences: "zip" }));
+  const [files,setFiles] = React.useState([])
 
   const setEditOff = changeKey => {
     const dup = {
@@ -55,7 +55,7 @@ function HrDiffWrap({
   }, [type]);
 
   React.useEffect(() => {
-    files.current = parseDiff(diff, { nearbySequences: "zip" });
+    setFiles(parseDiff(diff, { nearbySequences: "zip" }))
   }, [diff]);
 
   const closeFile = filePath => {
@@ -167,7 +167,7 @@ function HrDiffWrap({
   };
   return (
     <div>
-      {files.current.map(file => {
+      {files.map(file => {
         return (
           <div className="file">
             <div className="file_name">
