@@ -77,11 +77,10 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              console.log(value);
-              if (value.trim() === "") {
+              if (getValue().trim() === "") {
                 onCommentDelete(changeKey);
               } else {
-                submitComment(value).then(res => {
+                submitComment(getValue()).then(res => {
                   setEditOff(changeKey);
                 });
               }

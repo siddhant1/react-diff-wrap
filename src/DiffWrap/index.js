@@ -29,7 +29,7 @@ function HrDiffWrap({
 }) {
   const [closedFiles, setClosedFiles] = React.useState({});
   const [commentEditMode, setCommentEditMode] = React.useState({});
-  const [files,setFiles] = React.useState([])
+  const [files, setFiles] = React.useState([]);
 
   const setEditOff = changeKey => {
     const dup = {
@@ -51,11 +51,13 @@ function HrDiffWrap({
     css.innerHTML = "";
     css.appendChild(document.createTextNode(newEl));
     element.appendChild(css);
-    setClosedFiles({});
+    if (Object.keys(closedFiles).length === files.length) {
+      setClosedFiles({});
+    }
   }, [type]);
 
   React.useEffect(() => {
-    setFiles(parseDiff(diff, { nearbySequences: "zip" }))
+    setFiles(parseDiff(diff, { nearbySequences: "zip" }));
   }, [diff]);
 
   const closeFile = filePath => {

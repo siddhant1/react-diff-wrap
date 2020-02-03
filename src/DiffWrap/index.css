@@ -27,8 +27,11 @@
 
 .diff-decoration-content {
   background-color: #f1f8ff;
-  color: black;
+  height: 40px;
+  vertical-align: middle !important;
+  color: rgba(27, 31, 35, 0.7);
 }
+
 
 .diff-code-omit {
   background-color: #fafbfc;
@@ -54,7 +57,7 @@
 
 .diff-gutter {
   padding: 0 10px;
-  color: rgba(27,31,35,.3);
+  color: rgba(27, 31, 35, 0.3);
 }
 .diff-gutter-normal {
   text-align: right !important;
