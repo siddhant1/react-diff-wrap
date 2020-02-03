@@ -1,13 +1,11 @@
-import { mapValues } from "lodash";
+import "prism-themes/themes/prism-ghcolors.css";
 import React from "react";
 import { Decoration, Diff, Hunk, parseDiff, tokenize } from "react-diff-view";
 import "react-diff-view/style/index.css";
-import { ChevronRight, ChevronDown } from "react-feather";
-import { useConversations } from "./hooks.js/useConversation";
+import { ChevronDown, ChevronRight } from "react-feather";
+import * as refractor from "refractor";
 import { Conversation } from "./Conversation";
 import "./index.css";
-import * as refractor from "refractor";
-import "prism-themes/themes/prism-ghcolors.css";
 
 export function getChangeKey(change, file) {
   if (!change) throw new Error("change is not provided");
