@@ -83,6 +83,8 @@ function App() {
 
       setComments(dup);
     });
+
+    return deletePromise
   };
 
   return (

@@ -52,6 +52,8 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 2px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
   font-family: menlo;
 }
 

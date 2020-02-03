@@ -26,21 +26,24 @@ export const Conversation = ({
     content => onComment(undefined, changeKey, content),
     [changeKey, onComment]
   );
-  const getValue = () => {
-    if (value && value.trim() !== "") {
-      return value;
-    } else if (
-      comments &&
-      comments.comments &&
-      comments.comments[0].trim() !== ""
-    ) {
-      return comments.comments[0];
-    } else {
-      return value;
-    }
-  };
+  // const getValue = () => {
+  //   if (value && value.trim() !== "") {
+  //     return value;
+  //   } else if (
+  //     comments &&
+  //     comments.comments &&
+  //     comments.comments[0].trim() !== ""
+  //   ) {
+  //     return comments.comments[0];
+  //   } else {
+  //     return value;
+  //   }
+  // };
 
-  console.log({ value, comments, ge: getValue() });
+  React.useEffect(() => {
+    setValue(comments && comments.comments && comments.comments[0]);
+  }, [comments]);
+
   return (
     <div className="conversation">
       {!editMode &&
@@ -63,7 +66,7 @@ export const Conversation = ({
       {editMode && enableComment && (
         <div className="container mde-container">
           <ReactMde
-            value={getValue()}
+            value={value}
             onChange={setValue}
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
@@ -77,10 +80,12 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              if (getValue().trim() === "") {
-                onCommentDelete(changeKey);
+              if (value && value.trim() !== "") {
+                submitComment(value).then(res => {
+                  setEditOff(changeKey);
+                });
               } else {
-                submitComment(getValue()).then(res => {
+                onCommentDelete(undefined, changeKey).then(() => {
                   setEditOff(changeKey);
                 });
               }
@@ -93,7 +98,7 @@ export const Conversation = ({
             type="primary"
             onClick={() => {
               if (comments[0] && comments[0].trim() === "") {
-                onCommentDelete(changeKey);
+                onCommentDelete(undefined, changeKey);
               } else {
                 setEditOff(changeKey);
               }

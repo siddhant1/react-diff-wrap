@@ -54,6 +54,7 @@ function HrDiffWrap({
     if (Object.keys(closedFiles).length === files.length) {
       setClosedFiles({});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
   React.useEffect(() => {
