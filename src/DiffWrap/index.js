@@ -31,6 +31,7 @@ function HrDiffWrap({
 }) {
   const [closedFiles, setClosedFiles] = React.useState({});
   const [commentEditMode, setCommentEditMode] = React.useState({});
+  const files = React.useRef(parseDiff(diff, { nearbySequences: "zip" }));
 
   const setEditOff = changeKey => {
     const dup = {
@@ -54,6 +55,10 @@ function HrDiffWrap({
     element.appendChild(css);
     setClosedFiles({});
   }, [type]);
+
+  React.useEffect(() => {
+    files.current = parseDiff(diff, { nearbySequences: "zip" });
+  }, [diff]);
 
   const closeFile = filePath => {
     const duplicateClosedFiles = { ...closedFiles };
@@ -120,7 +125,6 @@ function HrDiffWrap({
   };
 
   // do this inside useMemo
-  const files = parseDiff(diff, { nearbySequences: "zip" });
 
   const renderGutter = ({
     change,
@@ -165,7 +169,7 @@ function HrDiffWrap({
   };
   return (
     <div>
-      {files.map(file => {
+      {files.current.map(file => {
         return (
           <div className="file">
             <div className="file_name">

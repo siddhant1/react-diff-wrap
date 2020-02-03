@@ -27,21 +27,12 @@ export const Conversation = ({
     [changeKey, onComment]
   );
   const getValue = () => {
-    if (
-      value &&
-      value.trim() === "" &&
-      comments &&
-      comments.comments &&
-      comments.comments[0] &&
-      comments.comments[0].trim() === ""
-    ) {
+    if (value && value.trim() !== "") {
       return value;
     } else if (
-      value &&
-      value.trim() === "" &&
       comments &&
       comments.comments &&
-      comments.comments[0]
+      comments.comments[0].trim() !== ""
     ) {
       return comments.comments[0];
     } else {
@@ -49,6 +40,7 @@ export const Conversation = ({
     }
   };
 
+  console.log({ value, comments, ge: getValue() });
   return (
     <div className="conversation">
       {!editMode &&
@@ -85,6 +77,7 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
+              console.log(value);
               if (value.trim() === "") {
                 onCommentDelete(changeKey);
               } else {
@@ -105,6 +98,8 @@ export const Conversation = ({
               } else {
                 setEditOff(changeKey);
               }
+
+              setValue(comments && comments.comments && comments.comments[0]);
             }}
           >
             Cancel
