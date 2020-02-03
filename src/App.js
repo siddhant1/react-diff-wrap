@@ -742,7 +742,7 @@ index 90c9d04b..3441d9cc 100644
   };
 
   return (
-    <div>
+    <div className="diff-root-container">
       <button
         onClick={() => {
           if (state === "split") {

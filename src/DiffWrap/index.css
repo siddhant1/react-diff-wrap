@@ -3,7 +3,7 @@
 :root {
   --diff-background-color: initial;
   --diff-text-color: initial;
-  --diff-font-family: menlo, Courier, monospace;
+  --diff-font-family: SFMono-Regular, Courier, monospace;
   --diff-selection-background-color: #b3d7ff;
   --diff-gutter-insert-background-color: #d6fedb;
   --diff-gutter-delete-background-color: #fadde0;
@@ -16,8 +16,13 @@
   --diff-omit-gutter-line-color: #cb2a1d;
 }
 
-body{
-  font-size: 13px;
+.diff-root-container {
+  font-size: 12px;
+}
+
+.diff-split {
+  border: 1px solid #ddd;
+  border-top: 0px;
 }
 
 .diff-decoration-content {
@@ -25,6 +30,13 @@ body{
   color: black;
 }
 
+.diff-code-omit {
+  background-color: #fafbfc;
+}
+
+.diff-gutter-omit {
+  background-color: #fafbfc;
+}
 /* .diff-gutter-omit{
   display: none;
 } */
@@ -192,24 +204,27 @@ textarea.mde-text {
 
 .comment_add_button {
   color: #2f69f4 !important;
+  font-size: 17.6px;
   transform: scale(1);
   transition: transform 0.1s ease-in-out;
 }
 
-.file_name{
+.file_name {
   position: sticky;
   top: 0px;
 }
 
-.file_name svg{
+.file_name svg {
   cursor: pointer;
   margin-right: 10px;
+  width: 16px;
+  height: 16px;
 }
-.file_name svg:hover{
+.file_name svg:hover {
   color: #0366d6;
   cursor: pointer;
 }
 
-.file{
+.file {
   margin-bottom: 20px;
 }
