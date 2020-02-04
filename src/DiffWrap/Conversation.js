@@ -23,10 +23,10 @@ export const Conversation = ({
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const [loading, setLoading] = React.useState(false);
-  const submitComment = useCallback(
-    content => onComment( changeKey, content),
-    [changeKey, onComment]
-  );
+  const submitComment = useCallback(content => onComment(changeKey, content), [
+    changeKey,
+    onComment
+  ]);
   // const getValue = () => {
   //   if (value && value.trim() !== "") {
   //     return value;
@@ -113,8 +113,8 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
-              setLoading(true);
               if (comments[0] && comments[0].trim() === "") {
+                setLoading(true);
                 onCommentDelete(changeKey).then(res => {
                   setLoading(false);
                 });
