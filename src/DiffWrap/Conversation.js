@@ -23,10 +23,10 @@ export const Conversation = ({
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const [loading, setLoading] = React.useState(false);
-  const submitComment = useCallback(
-    content => onComment(changeKey, content),
-    [changeKey, onComment]
-  );
+  const submitComment = useCallback(content => onComment(changeKey, content), [
+    changeKey,
+    onComment
+  ]);
   // const getValue = () => {
   //   if (value && value.trim() !== "") {
   //     return value;
@@ -73,7 +73,6 @@ export const Conversation = ({
             disabled
             onChange={setValue}
             selectedTab={selectedTab}
-            classes={{ textArea: loading ? "isLoading" : "" }}
             onTabChange={setSelectedTab}
             minEditorHeight={100}
             minPreviewHeight={100}

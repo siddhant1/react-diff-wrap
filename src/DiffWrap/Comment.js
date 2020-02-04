@@ -13,7 +13,7 @@ const Comment = ({
   setLoading
 }) => (
   <div className="comment-relative">
-    <div className={isLoading ? "comment isLoading" : "comment"}>
+    <div className="comment">
       <div className="author_box">
         <img
           className="image_author"
@@ -30,12 +30,12 @@ const Comment = ({
               <Delete
                 onClick={() => {
                   setLoading(true);
-                  deleteComment( changeKey)
+                  deleteComment(changeKey)
                     .then(() => {
                       setLoading(false);
                     })
                     .catch(e => {
-                      initConversation(changeKey)
+                      initConversation(changeKey);
                       setLoading(false);
                     });
                 }}
