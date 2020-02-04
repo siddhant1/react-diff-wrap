@@ -16,7 +16,7 @@ function App() {
       .then(res => setPatch(res));
   });
 
-  const onComment = (success = true, key, comment) => {
+  const onComment = (key, comment, success = true) => {
     // mocking an API request
     const commentAddPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -62,7 +62,7 @@ function App() {
     return commentAddPromise;
   };
 
-  const onCommentDelete = (success = true, key) => {
+  const onCommentDelete = (key, success = true) => {
     // do the similar functionalities except adding the comment
     const deletePromise = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -84,7 +84,7 @@ function App() {
       setComments(dup);
     });
 
-    return deletePromise
+    return deletePromise;
   };
 
   return (

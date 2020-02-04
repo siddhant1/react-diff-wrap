@@ -27,11 +27,11 @@
 
 .diff-decoration-content {
   background-color: #f1f8ff;
-  height: 40px;
+  height: 28px;
+  padding: 4px 10px !important;
   vertical-align: middle !important;
   color: rgba(27, 31, 35, 0.7);
 }
-
 
 .diff-code-omit {
   background-color: #fafbfc;
@@ -233,4 +233,12 @@ textarea.mde-text {
 
 .file {
   margin-bottom: 20px;
+}
+
+.isLoading {
+  background-color: rgba(238, 238, 239, 1);
+}
+
+.comment-relative {
+  position: relative;
 }

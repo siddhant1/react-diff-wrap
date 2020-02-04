@@ -22,8 +22,9 @@ export const Conversation = ({
 }) => {
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
+  const [loading, setLoading] = React.useState(false);
   const submitComment = useCallback(
-    content => onComment(undefined, changeKey, content),
+    content => onComment( changeKey, content),
     [changeKey, onComment]
   );
   // const getValue = () => {
@@ -52,6 +53,7 @@ export const Conversation = ({
         comments.comments.map((comment, i) => {
           return (
             <Comment
+              loading={loading}
               enableComment={enableComment}
               changeKey={changeKey}
               deleteComment={onCommentDelete}
@@ -59,6 +61,7 @@ export const Conversation = ({
               key={i}
               content={comment}
               initConversation={initConversation}
+              setLoading={setLoading}
             />
           );
         })}
@@ -67,8 +70,10 @@ export const Conversation = ({
         <div className="container mde-container">
           <ReactMde
             value={value}
+            disabled
             onChange={setValue}
             selectedTab={selectedTab}
+            classes={{ textArea: loading ? "isLoading" : "" }}
             onTabChange={setSelectedTab}
             minEditorHeight={100}
             minPreviewHeight={100}
@@ -80,14 +85,25 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
+              setLoading(true);
               if (value && value.trim() !== "") {
-                submitComment(value).then(res => {
-                  setEditOff(changeKey);
-                });
+                submitComment(value)
+                  .then(res => {
+                    setLoading(false);
+                    setEditOff(changeKey);
+                  })
+                  .catch(e => {
+                    setLoading(false);
+                  });
               } else {
-                onCommentDelete(undefined, changeKey).then(() => {
-                  setEditOff(changeKey);
-                });
+                onCommentDelete(changeKey)
+                  .then(() => {
+                    setLoading(false);
+                    setEditOff(changeKey);
+                  })
+                  .catch(e => {
+                    setLoading(false);
+                  });
               }
             }}
           >
@@ -97,8 +113,11 @@ export const Conversation = ({
             className="submit"
             type="primary"
             onClick={() => {
+              setLoading(true);
               if (comments[0] && comments[0].trim() === "") {
-                onCommentDelete(undefined, changeKey);
+                onCommentDelete(changeKey).then(res => {
+                  setLoading(false);
+                });
               } else {
                 setEditOff(changeKey);
               }
