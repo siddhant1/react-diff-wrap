@@ -23,10 +23,10 @@ export const Conversation = ({
   const [value, setValue] = React.useState("");
   const [selectedTab, setSelectedTab] = React.useState("write");
   const [loading, setLoading] = React.useState(false);
-  const submitComment = useCallback(content => onComment(changeKey, content), [
-    changeKey,
-    onComment
-  ]);
+  const submitComment = useCallback(
+    content => onComment(changeKey, content),
+    [changeKey, onComment]
+  );
   // const getValue = () => {
   //   if (value && value.trim() !== "") {
   //     return value;
@@ -82,6 +82,7 @@ export const Conversation = ({
             }
           />
           <Button
+            disabled={loading}
             className="submit"
             type="primary"
             onClick={() => {
@@ -102,6 +103,7 @@ export const Conversation = ({
                     setEditOff(changeKey);
                   })
                   .catch(e => {
+                    initConversation(changeKey);
                     setLoading(false);
                   });
               }
@@ -110,6 +112,7 @@ export const Conversation = ({
             Add Comment
           </Button>
           <Button
+            disabled={loading}
             className="submit"
             type="primary"
             onClick={() => {

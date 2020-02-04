@@ -35,6 +35,7 @@ const Comment = ({
                       setLoading(false);
                     })
                     .catch(e => {
+                      initConversation(changeKey)
                       setLoading(false);
                     });
                 }}
